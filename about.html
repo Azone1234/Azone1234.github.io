@@ -5,6 +5,8 @@
   <meta name="Viewport" content="width=device-width,initial-scale=1">
   <link rel="stylesheet" href="site.css">
 <script src="https://storage.googleapis.com/feednami-static/js/feednami-client-v1.0.1.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
   <script>
 
       window.onload = function() {
@@ -12,8 +14,37 @@
         displayGreeting();
         fetchWeather();
         displayRSSFeed();
-        listSheet();
+        listSheet(mymap);
+        var mymap= drawMap();
       }
+      function drawMap() {
+  // draw a map using leafletjs and tiles from mapbox
+  var mymap = L.map('mapid').setView([32.229598, -110.944674], 11);
+  L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+      attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+      maxZoom: 18,
+      id: 'mapbox/streets-v11',
+      tileSize: 512,
+      zoomOffset: -1,
+      accessToken: 'pk.eyJ1IjoiYXpvbmUiLCJhIjoiY2tnODN4NjJ6MDcxejMybXl3emF0eGU1ciJ9.v6L2PbaFIFczQ1o2OfkiGA'
+  }).addTo(mymap);
+  var marker1 = L.marker([32.338271, -111.043845]).addTo(mymap);
+  var marker2 = L.marker([32.257619, -110.801831]).addTo(mymap);
+  var marker3 = L.marker([32.221917, -110.832804]).addTo(mymap);
+  var marker4 = L.marker([32.192764, -110.823158]).addTo(mymap);
+  var marker5 = L.marker([32.229535, -110.910431]).addTo(mymap);
+
+  marker1.bindPopup("<b>Hello One!</b><br>I am a popup.").openPopup();
+  marker2.bindPopup("<b>Hello Two!</b><br>I am a popup.").openPopup();
+  marker3.bindPopup("<b>Hello Three!</b><br>I am a popup.").openPopup();
+  marker4.bindPopup("<b>Hello Four!</b><br>I am a popup.").openPopup();
+  marker5.bindPopup("<b>Hello Five!</b><br>I am a popup.").openPopup();
+  return mymap;
+}
+function addPin(mymap, lat, lon, name) {
+  // add a pin to mymap at lat, lon with a popup
+  L.marker([lat, lon]).addTo(mymap).bindPopup(name);
+}
       // display good morning, afternoon or evening based on the time
       function displayGreeting() {
         var date = new Date();
@@ -61,9 +92,9 @@
        });
      }
 
-     function listSheet() {
+     function listSheet(mymap) {
         // list google sheet rows
-        fetch('https://api.sheetson.com/v2/sheets/Sheet1', {
+        fetch('https://api.sheetson.com/v2/sheets/Sheet1?no-cache=ture', {
           withCredentials: true,
           headers: {
             'Content-Type': 'application/json',
@@ -77,6 +108,8 @@
             var result = data.results[i];
             let divElement = '<div class="cell">' + '<div class="cell_name">' + result.name + '</div>' + '<div class="cell_address">' + result.address + '</div>' + '<div class="cell_url"><a href="' + result.url + '">' + result.url + '</a></div>' + '<div class="cell_phone">' + result.phone + '</div>' + '</div>';
             document.getElementById("sheet").innerHTML += divElement;
+            addPin (mymap, result.lat, result.lon);
+
           }
         })
         .catch(function() {
@@ -89,10 +122,11 @@
 
   <div id="greeting"></div>
       <div id="weather"></div>
+       <div id="mapid"></div>
       <h2>Covid-19 Testing Locations</h2>
       <div id="sheet"></div>
       <div id="rss_items"></div>
-      
+
 
 <center>
     <div class="name_container">
