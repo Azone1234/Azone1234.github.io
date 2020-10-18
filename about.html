@@ -11,11 +11,12 @@
 
       window.onload = function() {
         // functions that run after page loads
+        var mymap = drawMap();
         displayGreeting();
         fetchWeather();
         displayRSSFeed();
         listSheet(mymap);
-        var mymap= drawMap();
+
       }
       function drawMap() {
   // draw a map using leafletjs and tiles from mapbox
@@ -28,17 +29,7 @@
       zoomOffset: -1,
       accessToken: 'pk.eyJ1IjoiYXpvbmUiLCJhIjoiY2tnODN4NjJ6MDcxejMybXl3emF0eGU1ciJ9.v6L2PbaFIFczQ1o2OfkiGA'
   }).addTo(mymap);
-  var marker1 = L.marker([32.338271, -111.043845]).addTo(mymap);
-  var marker2 = L.marker([32.257619, -110.801831]).addTo(mymap);
-  var marker3 = L.marker([32.221917, -110.832804]).addTo(mymap);
-  var marker4 = L.marker([32.192764, -110.823158]).addTo(mymap);
-  var marker5 = L.marker([32.229535, -110.910431]).addTo(mymap);
 
-  marker1.bindPopup("<b>Hello One!</b><br>I am a popup.").openPopup();
-  marker2.bindPopup("<b>Hello Two!</b><br>I am a popup.").openPopup();
-  marker3.bindPopup("<b>Hello Three!</b><br>I am a popup.").openPopup();
-  marker4.bindPopup("<b>Hello Four!</b><br>I am a popup.").openPopup();
-  marker5.bindPopup("<b>Hello Five!</b><br>I am a popup.").openPopup();
   return mymap;
 }
 function addPin(mymap, lat, lon, name) {
@@ -108,7 +99,9 @@ function addPin(mymap, lat, lon, name) {
             var result = data.results[i];
             let divElement = '<div class="cell">' + '<div class="cell_name">' + result.name + '</div>' + '<div class="cell_address">' + result.address + '</div>' + '<div class="cell_url"><a href="' + result.url + '">' + result.url + '</a></div>' + '<div class="cell_phone">' + result.phone + '</div>' + '</div>';
             document.getElementById("sheet").innerHTML += divElement;
-            addPin (mymap, result.lat, result.lon);
+
+
+            addPin(mymap, result.lat, result.lon, '<strong>' + result.name + '<strong><br>' + result.address + '<strong><br>' + result.phone + '<strong><br>' + result.url);
 
           }
         })
